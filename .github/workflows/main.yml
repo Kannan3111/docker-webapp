@@ -1,0 +1,31 @@
+name: Build and Run Docker Container
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-run:
+    runs-on: self-hosted
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Build Docker image
+        run: docker build -t demo-webapp:docker .
+        shell: powershell
+
+      - name: Stop and remove existing container (if any)
+        run: |
+          $container = docker ps -q -f "name=demo-container"
+          if ($container) {
+            docker stop demo-container
+            docker rm demo-container
+          }
+        shell: powershell
+
+      - name: Run Docker container
+        run: docker run -d --name demo-container -p 3000:3000 demo-webapp:docker
+        shell: powershell
