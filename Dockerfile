@@ -1,31 +1,17 @@
-# Stage 1: Build
-FROM node:18-alpine as builder
+# Build stage
+FROM node:18-alpine AS builder
 WORKDIR /app
-
-# Copy package files first for better caching
 COPY src/package*.json ./
-
-# Install dependencies
-RUN npm install
-
-# Copy all source files
+RUN npm install --production
 COPY src .
 
-# Stage 2: Runtime
+# Runtime stage
 FROM node:18-alpine
 WORKDIR /app
-
-# Copy only necessary files from builder
-COPY --from=builder /app/node_modules ./node_modules
-COPY --from=builder /app/public ./public
-COPY --from=builder /app/server.js ./
-COPY --from=builder /app/package.json ./
-
-# Environment variables
+COPY --from=builder /app .
 ENV NODE_ENV=production
-ENV PORT=3000
-
-# Expose port and run
 EXPOSE 3000
 USER node
+HEALTHCHECK --interval=30s --timeout=3s \
+  CMD wget -qO- http://localhost:3000/health || exit 1
 CMD ["node", "server.js"]

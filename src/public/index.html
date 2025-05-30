@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Docker App</title>
+    <link rel="stylesheet" href="style.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body>
+    <div class="container">
+        <h1>Success! 🎉</h1>
+        <p>Your Dockerized Node.js app is running perfectly.</p>
+        <div id="health">Loading health status...</div>
+    </div>
+    <script>
+        fetch('/health')
+            .then(r => r.json())
+            .then(data => {
+                document.getElementById('health').innerHTML = 
+                    `<h3>System Health:</h3>
+                     <pre>${JSON.stringify(data, null, 2)}</pre>`;
+            })
+            .catch(err => {
+                document.getElementById('health').innerHTML = 
+                    'Error loading health status';
+                console.error(err);
+            });
+    </script>
+</body>
+</html>
