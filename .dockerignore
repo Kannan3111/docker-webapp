@@ -1,0 +1,10 @@
+# Ignore everything except src/
+*
+!src/
+
+# Then ignore specific patterns within src/
+src/node_modules/
+src/npm-debug.log
+.git
+.gitignore
+*.md
